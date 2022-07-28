@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package subscriptions;
+
+message Subscription {
+  int32 id = 1;
+}
+
+service SubscriptionService {
+  rpc health(Subscription) returns (Subscription);
+}

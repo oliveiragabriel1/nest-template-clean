@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package users;
+
+import "common.proto";
+
+message UserStatus {
+  string id = 1;
+  bool isBlocked = 2;
+  bool isVerified = 3;
+  bool isDeleted = 4;
+  bool isPermanentBanned = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string birthday = 4;
+  string password = 5;
+  UserStatus userStatus = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string birthday = 3;
+  string password = 4;
+
+  message CreateUserStatus {
+    bool isBlocked = 1;
+    bool isVerified = 2;
+    bool isDeleted = 3;
+    bool isPermanentBanned = 4;
+  }
+
+  CreateUserStatus userStatus = 5;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc createUser(CreateUserRequest) returns (CreateUserResponse);
+}

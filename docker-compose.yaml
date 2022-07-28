@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  mstemplateapp:
+    build:
+      context: config/docker/ms-template/
+      dockerfile: Dockerfile.dev
+    container_name: ms-template-container
+    ports:
+      - 3333:3333
+    volumes:
+      - .:/home/node/app
+    networks:
+      - user-network
+  mstemplatedb:
+    build:
+      context: config/docker/postgres/
+      dockerfile: Dockerfile.dev
+    networks:
+      - user-network
+    container_name: ms-template-db-container
+    environment:
+      POSTGRES_USER: ms-template-db
+      POSTGRES_PASSWORD: ms-template-db
+      POSTGRES_DB: ms-template-db
+    ports:
+      - '8000:5432'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ms-template-db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mstemplaterabbit:
+    image: 'rabbitmq:3.8-management-alpine'
+    container_name: ms-template-rabbit-container
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    volumes:
+      - '/home/docker-volumes/mstemplaterabbit/rabbitmq_data:/var/lib/rabbitmq/mnesia'
+    environment:
+      - RABBITMQ_DEFAULT_USER=ms-template-rabbit
+      - RABBITMQ_DEFAULT_PASS=ms-template-rabbit
+    networks:
+      - user-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+    networks:
+      - user-network
+    container_name: exc-redis
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - mstemplatedb
+    networks:
+      - user-network
+
+  grpc-test:
+    image: gusaul/grpcox:latest
+    ports:
+      - 6969:6969
+    networks:
+      - user-network
+
+networks:
+  user-network:
+    driver: bridge
+  proxynet:
+    name: custom_network
