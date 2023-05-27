@@ -1,9 +1,3 @@
 {
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "assets": ["**/*.proto"],
-    "watchAssets": true
-  }
+    "version": "1.10.0 (2)"
 }
